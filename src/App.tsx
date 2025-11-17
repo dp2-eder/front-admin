@@ -1,10 +1,17 @@
+import { Routes, Route, Navigate } from "react-router-dom";
+import { DesktopInicioDe } from "./pages/login";
+import { DesktopListaDe } from "./pages/lista";
+import { Desktop } from "./pages/producto";
+
 function App() {
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-900">
-      <h1 className="text-3xl font-bold underline text-blue-500">
-        Prueba de que funciona esto jaja
-      </h1>
-    </div>
+    <Routes>
+      <Route path="/login" element={<DesktopInicioDe />} />
+      <Route path="/lista" element={<DesktopListaDe />} />
+      <Route path="/producto" element={<Desktop />} />
+
+      <Route path="/" element={<Navigate to="/login" replace />} />
+    </Routes>
   );
 }
 

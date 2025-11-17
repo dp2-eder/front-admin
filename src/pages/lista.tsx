@@ -1,12 +1,37 @@
-import React, { useState } from "react";
-import DINELine2 from "./DINE-LINE-2.png";
-import DINELine6 from "./DINE-LINE-6.png";
-import image26 from "./image-26.png";
-import image1 from "./image.svg";
-import vector from "./vector.svg";
-import { LoginInput } from "./LoginInput";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DINELine2 from "../assets/DINE-LINE-2.png";
+import DINELine6 from "../assets/DINE-LINE-6.png";
+import image26 from "../assets/image-26.png";
+import vector from "../assets/vector.svg";
+import image1 from "../assets/down.svg";
+import { LoginInput } from "../components/ui/LoginInput";
+
+type MenuItem = {
+  title: string;
+  image?: string;
+};
+
+type MenuItemCardProps = {
+  title: string;
+  imageSrc?: string;
+  onClick: () => void;
+};
+
+type MenuCategoryHeaderProps = {
+  title: string;
+  onClick: () => void;
+};
+
+type MenuCategorySectionProps = {
+  title: string;
+  items: MenuItem[];
+  onClick: () => void;
+  onCardClick: () => void;
+};
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
       <div className="absolute top-0 left-0 w-full h-[61px] bg-azul-principal" />
@@ -19,7 +44,10 @@ const Header = () => {
         />
 
         <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
-          <button className="[font-family:'Inter-Bold',Helvetica] font-bold text-white text-xl text-center whitespace-nowrap hover:opacity-80 transition-opacity">
+          <button
+            onClick={() => navigate("/login")}
+            className="[font-family:'Inter-Bold',Helvetica] font-bold text-white text-xl text-center whitespace-nowrap hover:opacity-80 transition-opacity"
+          >
             Cerrar sesión
           </button>
           <img
@@ -50,9 +78,12 @@ const Footer = () => {
   );
 };
 
-const MenuItemCard = ({ title, imageSrc }) => {
+const MenuItemCard = ({ title, imageSrc, onClick }: MenuItemCardProps) => {
   return (
-    <div className="relative flex items-center justify-center h-60 w-full rounded-[30px] p-4 cursor-pointer transition-transform hover:scale-105 overflow-hidden shadow-lg group">
+    <div
+      onClick={onClick}
+      className="relative flex items-center justify-center h-60 w-full rounded-[30px] p-4 cursor-pointer transition-transform hover:scale-105 overflow-hidden shadow-lg group"
+    >
       {imageSrc ? (
         <>
           <img
@@ -73,7 +104,7 @@ const MenuItemCard = ({ title, imageSrc }) => {
   );
 };
 
-const MenuCategoryHeader = ({ title, onClick }) => {
+const MenuCategoryHeader = ({ title, onClick }: MenuCategoryHeaderProps) => {
   return (
     <div
       onClick={onClick}
@@ -91,7 +122,12 @@ const MenuCategoryHeader = ({ title, onClick }) => {
   );
 };
 
-const MenuCategorySection = ({ title, items, onClick }) => {
+const MenuCategorySection = ({
+  title,
+  items,
+  onClick,
+  onCardClick,
+}: MenuCategorySectionProps) => {
   return (
     <section className="w-full bg-accent rounded-[30px] shadow-lg p-8">
       <div
@@ -110,6 +146,7 @@ const MenuCategorySection = ({ title, items, onClick }) => {
             key={item.title}
             title={item.title}
             imageSrc={item.image}
+            onClick={onCardClick}
           />
         ))}
       </div>
@@ -142,7 +179,12 @@ const menuData = {
 };
 
 export const DesktopListaDe = () => {
-  const [openCategory, setOpenCategory] = useState("Entradas");
+  const [openCategory, setOpenCategory] = useState<string | null>("Entradas");
+  const navigate = useNavigate();
+
+  const handleProductClick = () => {
+    navigate("/producto");
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#fafcfe]">
@@ -163,6 +205,7 @@ export const DesktopListaDe = () => {
               title="Entradas"
               items={menuData.entradas}
               onClick={() => setOpenCategory(null)}
+              onCardClick={handleProductClick}
             />
           ) : (
             <MenuCategoryHeader
@@ -178,6 +221,7 @@ export const DesktopListaDe = () => {
                 title={title}
                 items={[]}
                 onClick={() => setOpenCategory(null)}
+                onCardClick={handleProductClick}
               />
             ) : (
               <MenuCategoryHeader

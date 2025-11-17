@@ -1,9 +1,16 @@
 import React from "react";
-import DINELine3 from "./DINE-LINE-3.png";
-import { LockKeyhole } from "./LockKeyhole";
-import { UserRound } from "./UserRound";
+import { useNavigate } from "react-router-dom";
+import DINELine3 from "../assets/DINE-LINE.png";
+import LockKeyhole from "../assets/lock-keyhole.svg";
+import UserRound from "../assets/user-round.svg";
 
-const InputField = ({ icon: Icon, type, placeholder }) => {
+type InputFieldProps = {
+  icon: string;
+  type: string;
+  placeholder: string;
+};
+
+const InputField = ({ icon, type, placeholder }: InputFieldProps) => {
   return (
     <div className="relative w-full">
       <input
@@ -12,13 +19,21 @@ const InputField = ({ icon: Icon, type, placeholder }) => {
         className="w-full h-14 px-5 pr-12 py-3 text-xl bg-white rounded-[10px] border-[0.5px] border-solid border-[#ecf1f4] text-onyx placeholder-onyx focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <div className="absolute inset-y-0 right-0 flex items-center pr-5 pointer-events-none">
-        <Icon className="w-6 h-6 text-onyx" />
+        <img src={icon} alt="" className="w-6 h-6 text-onyx" />
       </div>
     </div>
   );
 };
 
 export const DesktopInicioDe = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Mocked
+    navigate("/lista");
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[linear-gradient(180deg,rgba(0,46,71,1)_38%,rgba(0,88,138,1)_75%,rgba(0,131,204,1)_100%)]">
       <div className="flex flex-col items-center w-full max-w-lg">
@@ -34,7 +49,7 @@ export const DesktopInicioDe = () => {
           “momentos Inolvidables”
         </div>
 
-        <form className="w-full space-y-6">
+        <form className="w-full space-y-6" onSubmit={handleSubmit}>
           <InputField icon={UserRound} type="text" placeholder="Usuario" />
 
           <InputField

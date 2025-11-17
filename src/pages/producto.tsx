@@ -1,12 +1,22 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import DINELine2 from "../assets/DINE-LINE-2.png";
+import DINELine6 from "../assets/DINE-LINE-6.png";
+import image26 from "../assets/image-26.png";
+import image30 from "../assets/image-30.png";
+import backArrowIcon from "../assets/back.svg";
+import headerIcon from "../assets/vector.svg";
+import { Button } from "../components/ui/Button";
 
-import DINELine2 from "./DINE-LINE-2.png";
-import DINELine6 from "./DINE-LINE-6.png";
-import image26 from "./image-26.png";
-import image30 from "./image-30.png";
-import backArrowIcon from "./vector.svg";
-import headerIcon from "./image.svg";
-import { Button } from "./Button";
+type FormInputProps = {
+  label: string;
+  type?: string;
+  defaultValue: string;
+};
+
+type FormTextareaProps = {
+  label: string;
+  defaultValue: string;
+};
 
 const ALLERGENS = [
   "Crustáceos",
@@ -23,7 +33,7 @@ const ALLERGENS = [
   "Mostaza",
 ];
 
-const FormInput = ({ label, type = "text", defaultValue }) => (
+const FormInput = ({ label, type = "text", defaultValue }: FormInputProps) => (
   <div className="w-full">
     <label className="block text-xl font-semibold text-black mb-2">
       {label}
@@ -36,7 +46,7 @@ const FormInput = ({ label, type = "text", defaultValue }) => (
   </div>
 );
 
-const FormTextarea = ({ label, defaultValue }) => (
+const FormTextarea = ({ label, defaultValue }: FormTextareaProps) => (
   <div className="w-full">
     <label className="block text-xl font-semibold text-black mb-2">
       {label}
@@ -104,25 +114,31 @@ const FileUploader = () => (
   </div>
 );
 
-const Header = () => (
-  <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
-    <div className="absolute top-0 left-0 w-full h-[61px] bg-azul-principal" />
-    <div className="relative max-w-7xl mx-auto h-full flex items-center justify-between px-8">
-      <div className="w-48" />
-      <img
-        className="absolute top-[5px] left-1/2 -translate-x-1/2 w-[120px] h-[120px] object-cover z-10"
-        alt="Dine LINE"
-        src={DINELine2}
-      />
-      <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
-        <button className="font-bold text-white text-xl text-center">
-          Cerrar sesión
-        </button>
-        <img className="w-8 h-8" alt="Icon" src={headerIcon} />
+const Header = () => {
+  const navigate = useNavigate();
+  return (
+    <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
+      <div className="absolute top-0 left-0 w-full h-[61px] bg-azul-principal" />
+      <div className="relative max-w-7xl mx-auto h-full flex items-center justify-between px-8">
+        <div className="w-48" />
+        <img
+          className="absolute top-[5px] left-1/2 -translate-x-1/2 w-[120px] h-[120px] object-cover z-10"
+          alt="Dine LINE"
+          src={DINELine2}
+        />
+        <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
+          <button
+            onClick={() => navigate("/login")}
+            className="font-bold text-white text-xl text-center"
+          >
+            Cerrar sesión
+          </button>
+          <img className="w-8 h-8" alt="Icon" src={headerIcon} />
+        </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 const Footer = () => (
   <footer className="relative w-full h-[476px] mt-20">
@@ -140,12 +156,16 @@ const Footer = () => (
 );
 
 export const Desktop = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <button className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-8 hover:text-black">
+        <button
+          onClick={() => navigate("/lista")}
+          className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-8 hover:text-black"
+        >
           <img className="w-6 h-6" alt="Volver" src={backArrowIcon} />
           Volver
         </button>
