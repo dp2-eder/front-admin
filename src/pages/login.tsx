@@ -16,10 +16,10 @@ const InputField = ({ icon, type, placeholder }: InputFieldProps) => {
       <input
         type={type}
         placeholder={placeholder}
-        className="w-full h-14 px-5 pr-12 py-3 text-xl bg-white rounded-[10px] border-[0.5px] border-solid border-[#ecf1f4] text-onyx placeholder-onyx focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full h-14 px-5 pr-12 py-3 text-xl bg-white rounded-[10px] border-[0.5px] border-solid border-[#ecf1f4] text-[#0E0E2C] placeholder-[#0E0E2C] focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <div className="absolute inset-y-0 right-0 flex items-center pr-5 pointer-events-none">
-        <img src={icon} alt="" className="w-6 h-6 text-onyx" />
+        <img src={icon} alt="" className="w-6 h-6 text-[#0E0E2C]" />
       </div>
     </div>
   );

@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import DINELine2 from "../assets/DINE-LINE-2.png";
-import DINELine6 from "../assets/DINE-LINE-6.png";
-import image26 from "../assets/image-26.png";
 import image30 from "../assets/image-30.png";
 import backArrowIcon from "../assets/back.svg";
-import headerIcon from "../assets/vector.svg";
 import { Button } from "../components/ui/Button";
-import { ALLERGENS, findProductById } from "../mockData/menuData";
+import {
+  ALLERGENS,
+  findProductById,
+  type ProductSection,
+} from "../mockData/menuData";
+import { NuevaSeccionModal } from "../components/ui/NewSectionModal";
+import { AdminLayout } from "../components/ui/AdminLayout";
 
 type FormInputProps = {
   label: string;
@@ -22,6 +25,10 @@ type FormTextareaProps = {
 type ImagePreviewProps = {
   src: string;
   alt: string;
+};
+
+type ProductSectionDisplayProps = {
+  section: ProductSection;
 };
 
 const FormInput = ({ label, type = "text", defaultValue }: FormInputProps) => (
@@ -101,57 +108,47 @@ const FileUploader = () => (
   </div>
 );
 
-const Header = () => {
-  const navigate = useNavigate();
+const ProductSectionDisplay = ({ section }: ProductSectionDisplayProps) => {
   return (
-    <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
-      <div className="absolute top-0 left-0 w-full h-[61px] bg-[#004166]" />
-      <div className="relative max-w-7xl mx-auto h-full flex items-center justify-between px-8">
-        <div className="w-48" />
-        <img
-          className="absolute top-[5px] left-1/2 -translate-x-1/2 w-[120px] h-[120px] object-cover z-10"
-          alt="Dine LINE"
-          src={DINELine2}
-        />
-        <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
-          <button
-            onClick={() => navigate("/login")}
-            className="font-bold text-white text-xl text-center"
+    <div className="w-full bg-white rounded-xl border border-solid border-[#99a1ae] p-4">
+      <h3 className="text-lg font-semibold mb-3 text-[#0E0E2C]">
+        {section.title}
+      </h3>
+      <div className="max-h-60 overflow-y-auto">
+        {section.options.map((option) => (
+          <div
+            key={option.id}
+            className="flex justify-between items-center py-2 border-b border-solid border-[#d0d5db] last:border-b-0"
           >
-            Cerrar sesión
-          </button>
-          <img className="w-8 h-8" alt="Icon" src={headerIcon} />
-        </div>
+            <div className="flex items-center gap-3">
+              <input
+                type={section.type}
+                name={`section-${section.id}`}
+                id={option.id}
+                className="h-4 w-4 border-gray-400 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor={option.id} className="text-sm text-black">
+                {option.name}
+              </label>
+            </div>
+            <span className="text-sm text-gray-600">{option.price}</span>
+          </div>
+        ))}
       </div>
-    </header>
+    </div>
   );
 };
-
-const Footer = () => (
-  <footer className="relative w-full h-[476px] mt-20">
-    <img
-      className="absolute bottom-0 left-0 w-full h-[308px] object-cover"
-      alt="Footer background"
-      src={image26}
-    />
-    <img
-      className="absolute top-[117px] left-1/2 -translate-x-1/2 w-[120px] h-[140px] object-cover"
-      alt="Dine LINE"
-      src={DINELine6}
-    />
-  </footer>
-);
 
 export const Desktop = () => {
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
   const product = findProductById(productId || "");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!product) {
     return (
       <div className="flex flex-col min-h-screen bg-white">
-        <Header />
-        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <AdminLayout>
           <h1 className="text-2xl font-bold text-center">
             Producto no encontrado
           </h1>
@@ -162,17 +159,14 @@ export const Desktop = () => {
             <img className="w-6 h-6" alt="Volver" src={backArrowIcon} />
             Volver a la lista
           </button>
-        </main>
-        <Footer />
+        </AdminLayout>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <Header />
-
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <AdminLayout>
         <button
           onClick={() => navigate("/lista")}
           className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-8 hover:text-black"
@@ -199,16 +193,31 @@ export const Desktop = () => {
             />
             <FormInput label="Precio" defaultValue={product.price} />
           </div>
-
-          <div className="lg:col-span-1 flex flex-col items-start pt-2">
-            <button className="w-full max-w-xs h-12 px-6 bg-[#004166] rounded-[20px] shadow-lg text-[#FAFCFE] text-sm font-semibold hover:opacity-90 transition-opacity">
-              Agregar Sección
-            </button>
+          <div className="lg:col-span-1 flex flex-col pt-2">
+            <div className="border border-[#99a1ae] rounded-2xl">
+              <div className="flex justify-between items-center p-6">
+                <h2 className="text-2xl font-bold text-[#0E0E2C]">Secciones</h2>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="px-5 py-2 bg-[#004166] rounded-lg shadow-lg text-[#FAFCFE] text-sm font-semibold hover:opacity-90 transition-opacity"
+                >
+                  Agregar Sección
+                </button>
+              </div>
+              <div className="p-2 flex-1 flex flex-col items-start gap-8 pr-2 h-[650px] overflow-y-auto">
+                {product.sections.map((section) => (
+                  <ProductSectionDisplay key={section.id} section={section} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </main>
+      </AdminLayout>
 
-      <Footer />
+      <NuevaSeccionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
