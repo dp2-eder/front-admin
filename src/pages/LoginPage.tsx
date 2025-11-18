@@ -25,7 +25,7 @@ const InputField = ({ icon, type, placeholder }: InputFieldProps) => {
   );
 };
 
-export const DesktopInicioDe = () => {
+export const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
