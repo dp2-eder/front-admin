@@ -6,15 +6,11 @@ import image26 from "../assets/image-26.png";
 import vector from "../assets/vector.svg";
 import image1 from "../assets/down.svg";
 import { LoginInput } from "../components/ui/LoginInput";
-
-type MenuItem = {
-  title: string;
-  image?: string;
-};
+import { menuData, type MenuCategory } from "../mockData/menuData";
 
 type MenuItemCardProps = {
   title: string;
-  imageSrc?: string;
+  imageSrc?: string | null;
   onClick: () => void;
 };
 
@@ -24,17 +20,16 @@ type MenuCategoryHeaderProps = {
 };
 
 type MenuCategorySectionProps = {
-  title: string;
-  items: MenuItem[];
+  category: MenuCategory;
   onClick: () => void;
-  onCardClick: () => void;
+  onCardClick: (id: string) => void;
 };
 
 const Header = () => {
   const navigate = useNavigate();
   return (
     <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
-      <div className="absolute top-0 left-0 w-full h-[61px] bg-azul-principal" />
+      <div className="absolute top-0 left-0 w-full h-[61px] bg-[#004166]" />
       <div className="relative max-w-7xl mx-auto h-full flex items-center justify-between px-8">
         <div className="w-48" />
         <img
@@ -42,7 +37,6 @@ const Header = () => {
           alt="Dine LINE"
           src={DINELine2}
         />
-
         <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
           <button
             onClick={() => navigate("/login")}
@@ -82,7 +76,7 @@ const MenuItemCard = ({ title, imageSrc, onClick }: MenuItemCardProps) => {
   return (
     <div
       onClick={onClick}
-      className="relative flex items-center justify-center h-60 w-full rounded-[30px] p-4 cursor-pointer transition-transform hover:scale-105 overflow-hidden shadow-lg group"
+      className="relative flex items-center justify-center h-60 w-full rounded-[30px] p-4 cursor-pointer transition-transform hover:scale-105 overflow-hidden shadow-lg group bg-[#004166]"
     >
       {imageSrc ? (
         <>
@@ -94,9 +88,8 @@ const MenuItemCard = ({ title, imageSrc, onClick }: MenuItemCardProps) => {
           <div className="absolute inset-0 bg-black bg-opacity-40" />
         </>
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-azul-principal" />
+        <div className="absolute inset-0 w-full h-full bg-" />
       )}
-
       <h3 className="relative z-10 [font-family:'Montserrat-Bold',Helvetica] font-bold text-white text-3xl text-center">
         {title}
       </h3>
@@ -108,9 +101,9 @@ const MenuCategoryHeader = ({ title, onClick }: MenuCategoryHeaderProps) => {
   return (
     <div
       onClick={onClick}
-      className="flex justify-between items-center w-full h-28 bg-accent rounded-[30px] shadow-lg p-8 cursor-pointer hover:bg-opacity-90 transition-all"
+      className="flex justify-between items-center w-full h-28 bg-[#ECF1F4] rounded-[30px] shadow-lg p-8 cursor-pointer hover:bg-opacity-90 transition-all"
     >
-      <h2 className="[font-family:'Inter-ExtraBold',Helvetica] font-extrabold text-onyx-letras text-[40px] text-center">
+      <h2 className="[font-family:'Inter-ExtraBold',Helvetica] font-extrabold text-[#0E0E2C] text-[40px] text-center">
         {title}
       </h2>
       <img
@@ -123,30 +116,29 @@ const MenuCategoryHeader = ({ title, onClick }: MenuCategoryHeaderProps) => {
 };
 
 const MenuCategorySection = ({
-  title,
-  items,
+  category,
   onClick,
   onCardClick,
 }: MenuCategorySectionProps) => {
   return (
-    <section className="w-full bg-accent rounded-[30px] shadow-lg p-8">
+    <section className="w-full bg-[#ECF1F4] rounded-[30px] shadow-lg p-8">
       <div
         onClick={onClick}
         className="flex justify-between items-center border-b border-gray-300 pb-4 mb-8 cursor-pointer"
       >
-        <h2 className="[font-family:'Inter-ExtraBold',Helvetica] font-extrabold text-onyx-letras text-[40px] text-center">
-          {title}
+        <h2 className="[font-family:'Inter-ExtraBold',Helvetica] font-extrabold text-[#0E0E2C] text-[40px] text-center">
+          {category.title}
         </h2>
         <img src={image1} alt="Colapsar" className="w-10 h-10" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {items.map((item) => (
+        {category.items.map((item) => (
           <MenuItemCard
-            key={item.title}
+            key={item.id}
             title={item.title}
             imageSrc={item.image}
-            onClick={onCardClick}
+            onClick={() => onCardClick(item.id)}
           />
         ))}
       </div>
@@ -154,36 +146,12 @@ const MenuCategorySection = ({
   );
 };
 
-const menuData = {
-  entradas: [
-    { title: "Langostinos en Panko", image: "image.png" },
-    { title: "Causa de Pollo" },
-    { title: "Causa de Pulpo al olivo" },
-    { title: "Conchitas a la parmesana" },
-    { title: "Leche de tigre" },
-    { title: "Ocopa" },
-    { title: "Papa a la huancaína" },
-    { title: "Papa rellena" },
-    { title: "Tamal verde" },
-  ],
-  otrasCategorias: [
-    "Arroces",
-    "Ceviches",
-    "Sopas",
-    "Fondos",
-    "Combos Marinos",
-    "Bebidas Sin Alcohol",
-    "Bebidas Con Alcohol",
-    "Adicionales",
-  ],
-};
-
 export const DesktopListaDe = () => {
   const [openCategory, setOpenCategory] = useState<string | null>("Entradas");
   const navigate = useNavigate();
 
-  const handleProductClick = () => {
-    navigate("/producto");
+  const handleProductClick = (id: string) => {
+    navigate(`/producto/${id}`);
   };
 
   return (
@@ -191,7 +159,7 @@ export const DesktopListaDe = () => {
       <Header />
 
       <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-[45px] font-bold text-onyx-letras text-center mb-8">
+        <h1 className="text-[45px] font-bold text-[#0E0E2C] text-center mb-8">
           Nuestro Menú
         </h1>
 
@@ -200,34 +168,19 @@ export const DesktopListaDe = () => {
         </div>
 
         <div className="flex flex-col gap-12">
-          {openCategory === "Entradas" ? (
-            <MenuCategorySection
-              title="Entradas"
-              items={menuData.entradas}
-              onClick={() => setOpenCategory(null)}
-              onCardClick={handleProductClick}
-            />
-          ) : (
-            <MenuCategoryHeader
-              title="Entradas"
-              onClick={() => setOpenCategory("Entradas")}
-            />
-          )}
-
-          {menuData.otrasCategorias.map((title) =>
-            openCategory === title ? (
+          {menuData.map((category) =>
+            openCategory === category.title ? (
               <MenuCategorySection
-                key={title}
-                title={title}
-                items={[]}
+                key={category.title}
+                category={category}
                 onClick={() => setOpenCategory(null)}
                 onCardClick={handleProductClick}
               />
             ) : (
               <MenuCategoryHeader
-                key={title}
-                title={title}
-                onClick={() => setOpenCategory(title)}
+                key={category.title}
+                title={category.title}
+                onClick={() => setOpenCategory(category.title)}
               />
             ),
           )}

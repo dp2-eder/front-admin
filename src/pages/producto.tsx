@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DINELine2 from "../assets/DINE-LINE-2.png";
 import DINELine6 from "../assets/DINE-LINE-6.png";
 import image26 from "../assets/image-26.png";
@@ -6,6 +6,7 @@ import image30 from "../assets/image-30.png";
 import backArrowIcon from "../assets/back.svg";
 import headerIcon from "../assets/vector.svg";
 import { Button } from "../components/ui/Button";
+import { ALLERGENS, findProductById } from "../mockData/menuData";
 
 type FormInputProps = {
   label: string;
@@ -18,20 +19,10 @@ type FormTextareaProps = {
   defaultValue: string;
 };
 
-const ALLERGENS = [
-  "Crustáceos",
-  "Huevos",
-  "Pescado",
-  "Lácteos",
-  "Frutos con cáscara",
-  "Moluscos",
-  "Apio",
-  "Sésamo",
-  "Gluten",
-  "Cacahuates",
-  "Salsa de soja",
-  "Mostaza",
-];
+type ImagePreviewProps = {
+  src: string;
+  alt: string;
+};
 
 const FormInput = ({ label, type = "text", defaultValue }: FormInputProps) => (
   <div className="w-full">
@@ -63,7 +54,7 @@ const AllergenList = () => (
   <div className="w-full bg-white rounded-xl border border-solid border-[#99a1ae] p-4">
     <div className="flex justify-between items-center mb-3">
       <h3 className="text-lg font-semibold">Alérgenos</h3>
-      <span className="bg-azul-principal text-white text-xs font-medium px-2 py-0.5 rounded-md">
+      <span className="bg-[#004166] text-white text-xs font-medium px-2 py-0.5 rounded-md">
         Opcional
       </span>
     </div>
@@ -90,13 +81,9 @@ const AllergenList = () => (
   </div>
 );
 
-const ImagePreview = () => (
+const ImagePreview = ({ src, alt }: ImagePreviewProps) => (
   <div className="w-full aspect-square rounded-[20px] border border-solid border-black overflow-hidden">
-    <img
-      className="w-full h-full object-cover"
-      alt="Previsualización de producto"
-      src={image30}
-    />
+    <img className="w-full h-full object-cover" alt={alt} src={src} />
   </div>
 );
 
@@ -107,7 +94,7 @@ const FileUploader = () => (
     </div>
 
     <Button
-      className="!h-10 !flex-shrink-0 !bg-azul-principal !w-auto"
+      className="!h-10 !flex-shrink-0 !bg-[#004166] !w-auto text-white rounded-2xl"
       property1="default"
       text="Subir"
     />
@@ -118,7 +105,7 @@ const Header = () => {
   const navigate = useNavigate();
   return (
     <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
-      <div className="absolute top-0 left-0 w-full h-[61px] bg-azul-principal" />
+      <div className="absolute top-0 left-0 w-full h-[61px] bg-[#004166]" />
       <div className="relative max-w-7xl mx-auto h-full flex items-center justify-between px-8">
         <div className="w-48" />
         <img
@@ -157,6 +144,30 @@ const Footer = () => (
 
 export const Desktop = () => {
   const navigate = useNavigate();
+  const { productId } = useParams<{ productId: string }>();
+  const product = findProductById(productId || "");
+
+  if (!product) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white">
+        <Header />
+        <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h1 className="text-2xl font-bold text-center">
+            Producto no encontrado
+          </h1>
+          <button
+            onClick={() => navigate("/lista")}
+            className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-8 hover:text-black"
+          >
+            <img className="w-6 h-6" alt="Volver" src={backArrowIcon} />
+            Volver a la lista
+          </button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-white">
       <Header />
@@ -172,22 +183,25 @@ export const Desktop = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-1 flex flex-col gap-8">
-            <ImagePreview />
+            <ImagePreview
+              src={product.image ? product.image : image30}
+              alt={product.title}
+            />
             <FileUploader />
             <AllergenList />
           </div>
 
           <div className="lg:col-span-1 flex flex-col gap-8 pt-2">
-            <FormInput label="Nombre" defaultValue="Ceviche de pescado" />
+            <FormInput label="Nombre" defaultValue={product.title} />
             <FormTextarea
               label="Descripción"
-              defaultValue="Trozos de pescado con jugo de limón, cebolla, ají limo y sal, acompañados de choclo, camote y yuyo."
+              defaultValue={product.description}
             />
-            <FormInput label="Precio" defaultValue="S/39.90" />
+            <FormInput label="Precio" defaultValue={product.price} />
           </div>
 
           <div className="lg:col-span-1 flex flex-col items-start pt-2">
-            <button className="w-full max-w-xs h-12 px-6 bg-azul-principal rounded-[20px] shadow-lg text-light-cloud text-sm font-semibold hover:opacity-90 transition-opacity">
+            <button className="w-full max-w-xs h-12 px-6 bg-[#004166] rounded-[20px] shadow-lg text-[#FAFCFE] text-sm font-semibold hover:opacity-90 transition-opacity">
               Agregar Sección
             </button>
           </div>

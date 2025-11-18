@@ -43,10 +43,10 @@ export const DesktopInicioDe = () => {
           src={DINELine3}
         />
 
-        <div className="my-12 [font-family:'Inter-ExtraLight_Italic',Helvetica] font-extralight italic text-white text-5xl text-center">
-          “sabores Auténticos”
+        <div className="my-12 [font-family:'Inter-ExtraLight_Italic',Helvetica] font-extralight italic text-white text-4xl text-center">
+          “Sabores Auténticos”
           <br />
-          “momentos Inolvidables”
+          “Momentos Inolvidables”
         </div>
 
         <form className="w-full space-y-6" onSubmit={handleSubmit}>
@@ -60,7 +60,7 @@ export const DesktopInicioDe = () => {
 
           <button
             type="submit"
-            className="w-full h-[79px] bg-azul-principal text-light-cloud text-[32px] rounded-lg font-bold hover:opacity-90 transition-opacity"
+            className="w-full h-[79px] bg-[#004166] text-[#FAFCFE] text-[32px] rounded-lg font-bold hover:opacity-90 transition-opacity shadow-xl"
           >
             Ingresar
           </button>

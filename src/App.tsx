@@ -8,8 +8,8 @@ function App() {
     <Routes>
       <Route path="/login" element={<DesktopInicioDe />} />
       <Route path="/lista" element={<DesktopListaDe />} />
-      <Route path="/producto" element={<Desktop />} />
-
+      <Route path="/producto/:productId" element={<Desktop />} />
+      <Route path="/producto" element={<Navigate to="/lista" replace />} />
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );
