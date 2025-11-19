@@ -26,7 +26,7 @@ export const ProductPage = () => {
             Producto no encontrado
           </h1>
           <button
-            onClick={() => navigate("/lista")}
+            onClick={() => navigate("/admin/lista")}
             className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-8 hover:text-black"
           >
             <img className="w-6 h-6" alt="Volver" src={backArrowIcon} />
@@ -41,7 +41,7 @@ export const ProductPage = () => {
     <div className="flex flex-col min-h-screen bg-white">
       <AdminLayout>
         <button
-          onClick={() => navigate("/lista")}
+          onClick={() => navigate("/admin/lista")}
           className="flex items-center gap-2 text-lg font-semibold text-gray-700 mb-8 hover:text-black"
         >
           <img className="w-6 h-6" alt="Volver" src={backArrowIcon} />

@@ -11,7 +11,7 @@ export const ListPage = () => {
   const navigate = useNavigate();
 
   const handleProductClick = (id: string) => {
-    navigate(`/producto/${id}`);
+    navigate(`/admin/producto/${id}`);
   };
 
   return (

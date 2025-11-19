@@ -19,7 +19,7 @@ const Header = () => {
         />
         <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/admin/login")}
             className="[font-family:'Inter-Bold',Helvetica] font-bold text-white text-xl text-center whitespace-nowrap hover:opacity-80 transition-opacity"
           >
             Cerrar sesión

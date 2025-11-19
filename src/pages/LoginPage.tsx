@@ -31,7 +31,7 @@ export const LoginPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Mocked
-    navigate("/lista");
+    navigate("/admin/lista");
   };
 
   return (
