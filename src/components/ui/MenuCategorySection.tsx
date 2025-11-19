@@ -1,6 +1,6 @@
 import image1 from "../../assets/down.svg";
 import { MenuItemCard } from "./MenuItemCard";
-import { type MenuCategory } from "../../mockData/menuData";
+import { type MenuCategory } from "../../types/types";
 
 type MenuCategorySectionProps = {
   category: MenuCategory;

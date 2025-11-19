@@ -1,4 +1,4 @@
-import { type ProductSection } from "../../mockData/menuData";
+import { type ProductSection } from "../../types/types";
 
 type ProductSectionDisplayProps = {
   section: ProductSection;

@@ -78,7 +78,7 @@ export const ProductPage = () => {
                   Agregar Sección
                 </button>
               </div>
-              <div className="p-2 flex-1 flex flex-col items-start gap-8 pr-2 h-[650px] overflow-y-auto scrollbar-none">
+              <div className="p-2 flex-1 flex flex-col items-start gap-8 pr-2 max-h-[650px] overflow-y-auto scrollbar-none">
                 {product.sections.map((section) => (
                   <ProductSectionDisplay key={section.id} section={section} />
                 ))}
