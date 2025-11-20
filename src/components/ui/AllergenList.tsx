@@ -4,9 +4,13 @@ import type { Alergeno, ProductAlergeno } from "../../types/types";
 
 type AllergenListProps = {
   selectedAllergens?: ProductAlergeno[];
+  onToggle?: (allergen: Alergeno, isChecked: boolean) => void;
 };
 
-export const AllergenList = ({ selectedAllergens = [] }: AllergenListProps) => {
+export const AllergenList = ({
+  selectedAllergens = [],
+  onToggle,
+}: AllergenListProps) => {
   const [availableAllergens, setAvailableAllergens] = useState<Alergeno[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,12 +25,15 @@ export const AllergenList = ({ selectedAllergens = [] }: AllergenListProps) => {
         setLoading(false);
       }
     };
-
     fetchAllergens();
   }, []);
 
   if (loading) {
-    return <div className="p-4 border rounded-xl">Cargando alérgenos...</div>;
+    return (
+      <div className="p-4 border rounded-xl text-gray-500">
+        Cargando alérgenos...
+      </div>
+    );
   }
 
   return (
@@ -47,29 +54,28 @@ export const AllergenList = ({ selectedAllergens = [] }: AllergenListProps) => {
           return (
             <div
               key={allergen.id}
-              className="flex items-center gap-3 py-2 border-b border-solid border-[#d0d5db] last:border-b-0"
+              className="flex items-center gap-3 py-2 border-b border-solid border-[#d0d5db] last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer"
+              onClick={() => onToggle && onToggle(allergen, !isChecked)}
             >
               <input
                 type="checkbox"
                 id={`allergen-${allergen.id}`}
                 checked={isChecked}
-                className="h-4 w-4 rounded border-gray-400 text-blue-600 focus:ring-blue-500 pointer-events-none"
+                onChange={(e) =>
+                  onToggle && onToggle(allergen, e.target.checked)
+                }
+                className="h-4 w-4 rounded border-gray-400 text-blue-600 focus:ring-blue-500 cursor-pointer"
               />
               <label
                 htmlFor={`allergen-${allergen.id}`}
-                className="text-sm text-black"
+                className="text-sm text-black cursor-pointer select-none"
+                onClick={(e) => e.stopPropagation()}
               >
                 {allergen.nombre}
               </label>
             </div>
           );
         })}
-
-        {availableAllergens.length === 0 && (
-          <p className="text-sm text-gray-500 text-center py-2">
-            No hay alérgenos configurados.
-          </p>
-        )}
       </div>
     </div>
   );

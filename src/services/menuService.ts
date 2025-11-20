@@ -36,3 +36,45 @@ export const getAllAllergens = async (): Promise<AlergenoListResponse> => {
     throw error;
   }
 };
+
+export const uploadProductImage = async (productId: string, file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await apiClient.post(
+      `/productos/${productId}/imagen`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw error;
+  }
+};
+
+export const getProductImageUrl = (imagePath: string | null) => {
+  if (!imagePath) return null;
+
+  if (imagePath.includes("drive.google.com")) {
+    if (imagePath.includes("export=view")) return imagePath;
+
+    const idMatch = imagePath.match(/\/d\/(.+?)\//);
+    if (idMatch && idMatch[1]) {
+      return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+    }
+    return imagePath;
+  }
+
+  if (imagePath.startsWith("http")) {
+    return imagePath;
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL.replace("/api/v1", "");
+  return `${baseUrl}/static/images/${imagePath}`;
+};

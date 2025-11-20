@@ -46,7 +46,6 @@ export const ProductSectionDisplay = ({
               </label>
             </div>
             <span className="text-sm text-gray-600">
-              {/* Formatear precio */}
               {Number(option.precio_adicional) > 0
                 ? `+$${option.precio_adicional}`
                 : "Gratis"}

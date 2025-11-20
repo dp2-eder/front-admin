@@ -18,8 +18,6 @@ export type MenuOption = {
   precio_adicional: string;
   activo: boolean;
   orden: number;
-  fecha_creacion: string;
-  fecha_modificacion: string;
 };
 
 export type MenuOptionGroup = {
