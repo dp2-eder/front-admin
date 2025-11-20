@@ -9,7 +9,7 @@ import type {
 export const getMenuCards = async (): Promise<CategoryListResponse> => {
   try {
     const response = await apiClient.get<CategoryListResponse>(
-      "/categorias/productos/cards",
+      "/api/v1/categorias/productos/cards",
     );
     return response.data;
   } catch (error) {
@@ -20,7 +20,9 @@ export const getMenuCards = async (): Promise<CategoryListResponse> => {
 
 export const getProductDetails = async (id: string): Promise<MenuItem> => {
   try {
-    const response = await apiClient.get<MenuItem>(`/productos/${id}/opciones`);
+    const response = await apiClient.get<MenuItem>(
+      `/api/v1/productos/${id}/opciones`,
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching product details:", error);
@@ -30,7 +32,8 @@ export const getProductDetails = async (id: string): Promise<MenuItem> => {
 
 export const getAllAllergens = async (): Promise<AlergenoListResponse> => {
   try {
-    const response = await apiClient.get<AlergenoListResponse>("/alergenos");
+    const response =
+      await apiClient.get<AlergenoListResponse>("/api/v1/alergenos");
     return response.data;
   } catch (error) {
     console.error("Error fetching allergens list:", error);
@@ -44,7 +47,7 @@ export const uploadProductImage = async (productId: string, file: File) => {
     formData.append("file", file);
 
     const response = await apiClient.post(
-      `/productos/${productId}/imagen`,
+      `/api/v1/productos/${productId}/imagen`,
       formData,
       {
         headers: {
@@ -76,8 +79,8 @@ export const getProductImageUrl = (imagePath: string | null) => {
     return imagePath;
   }
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL.replace("/api/v1", "");
-  return `${baseUrl}/static/images/${imagePath}`;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  return `${baseUrl}/static/${imagePath}`;
 };
 
 export const updateProductComplete = async (
@@ -85,7 +88,10 @@ export const updateProductComplete = async (
   data: UpdateProductCompleteRequest,
 ) => {
   try {
-    const response = await apiClient.put(`/productos/${id}/completo`, data);
+    const response = await apiClient.put(
+      `/api/v1/productos/${id}/completo`,
+      data,
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating complete product info:", error);

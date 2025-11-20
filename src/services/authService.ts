@@ -5,7 +5,7 @@ export const loginUser = async (
   credentials: LoginCredentials,
 ): Promise<LoginResponse> => {
   const response = await apiClient.post<LoginResponse>(
-    "/admins/login",
+    "/api/v1/admins/login",
     credentials,
   );
   return response.data;
