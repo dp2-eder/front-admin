@@ -1,5 +1,9 @@
 import apiClient from "../services/api";
-import type { CategoryListResponse, MenuItem } from "../types/types";
+import type {
+  CategoryListResponse,
+  MenuItem,
+  AlergenoListResponse,
+} from "../types/types";
 
 export const getMenuCards = async (): Promise<CategoryListResponse> => {
   try {
@@ -15,17 +19,20 @@ export const getMenuCards = async (): Promise<CategoryListResponse> => {
 
 export const getProductDetails = async (id: string): Promise<MenuItem> => {
   try {
-    const response = await apiClient.get(`/productos/${id}/opciones`);
-    const data = response.data;
-
-    return {
-      ...data,
-      alergenos: data.alergenos.map((a: string) =>
-        typeof a === "string" ? a : a,
-      ),
-    };
+    const response = await apiClient.get<MenuItem>(`/productos/${id}/opciones`);
+    return response.data;
   } catch (error) {
     console.error("Error fetching product details:", error);
+    throw error;
+  }
+};
+
+export const getAllAllergens = async (): Promise<AlergenoListResponse> => {
+  try {
+    const response = await apiClient.get<AlergenoListResponse>("/alergenos");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching allergens list:", error);
     throw error;
   }
 };

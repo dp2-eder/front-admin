@@ -1,3 +1,17 @@
+export type Alergeno = {
+  id: string;
+  nombre: string;
+  nivel_riesgo?: string;
+  icono?: string | null;
+  activo?: boolean;
+};
+
+export type ProductAlergeno = {
+  id: string;
+  nombre: string;
+  nivel_presencia?: string;
+};
+
 export type MenuOption = {
   id: string;
   nombre: string;
@@ -28,7 +42,7 @@ export type MenuItem = {
   id_categoria: string;
   disponible: boolean;
   destacado: boolean;
-  alergenos: string[];
+  alergenos: ProductAlergeno[];
   fecha_creacion: string;
   fecha_modificacion: string;
   tipos_opciones: MenuOptionGroup[];
@@ -84,3 +98,8 @@ export interface AuthContextType {
   login: (token: string) => void;
   logout: () => void;
 }
+
+export type AlergenoListResponse = {
+  items: Alergeno[];
+  total: number;
+};

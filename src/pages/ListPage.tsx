@@ -5,7 +5,6 @@ import { MenuCategoryHeader } from "../components/ui/MenuCategoryHeader";
 import { MenuCategorySection } from "../components/ui/MenuCategorySection";
 import { getMenuCards } from "../services/menuService";
 import type { CategoryWithProductsCard } from "../types/types";
-import { SearchBar } from "../components/ui/SearchBar";
 
 export const ListPage = () => {
   const navigate = useNavigate();
@@ -67,10 +66,6 @@ export const ListPage = () => {
         <h1 className="text-[45px] font-bold text-[#0E0E2C] text-center mb-8">
           Nuestro Menú
         </h1>
-
-        <div className="w-full max-w-lg mx-auto mb-12">
-          <SearchBar />
-        </div>
 
         <div className="flex flex-col gap-12 pb-10">
           {categories.map((category) =>
