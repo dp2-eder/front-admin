@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import DINELine3 from "../assets/DINE-LINE.png";
 import LockKeyhole from "../assets/lock-keyhole.svg";
 import UserRound from "../assets/user-round.svg";
@@ -8,13 +9,26 @@ type InputFieldProps = {
   icon: string;
   type: string;
   placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string;
 };
 
-const InputField = ({ icon, type, placeholder }: InputFieldProps) => {
+const InputField = ({
+  icon,
+  type,
+  placeholder,
+  value,
+  onChange,
+  name,
+}: InputFieldProps) => {
   return (
     <div className="relative w-full">
       <input
+        name={name}
         type={type}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         className="w-full h-14 px-5 pr-12 py-3 text-xl bg-white rounded-[10px] border-[0.5px] border-solid border-[#ecf1f4] text-[#0E0E2C] placeholder-[#0E0E2C] focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
@@ -27,11 +41,47 @@ const InputField = ({ icon, type, placeholder }: InputFieldProps) => {
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    if (error) setError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mocked
-    navigate("/admin/lista");
+
+    if (!formData.email || !formData.password) {
+      setError("Por favor completa todos los campos");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { loginUser } = await import("../services/authService");
+      const response = await loginUser(formData);
+      login(response.access_token);
+
+      navigate("/admin/lista");
+    } catch (err) {
+      console.error(err);
+      setError("Usuario o contraseña incorrectos");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -50,19 +100,37 @@ export const LoginPage = () => {
         </div>
 
         <form className="w-full space-y-6" onSubmit={handleSubmit}>
-          <InputField icon={UserRound} type="text" placeholder="Usuario" />
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center animate-pulse">
+              {error}
+            </div>
+          )}
+
+          <InputField
+            icon={UserRound}
+            type="text"
+            placeholder="Usuario o Email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
 
           <InputField
             icon={LockKeyhole}
             type="password"
             placeholder="Contraseña"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
           />
 
           <button
             type="submit"
-            className="w-full h-[79px] bg-[#004166] text-[#FAFCFE] text-[32px] rounded-lg font-bold hover:opacity-90 transition-opacity shadow-xl"
+            disabled={loading}
+            className={`w-full h-[79px] bg-[#004166] text-[#FAFCFE] text-[32px] rounded-lg font-bold shadow-xl transition-all
+                ${loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90 hover:scale-[1.01]"}`}
           >
-            Ingresar
+            {loading ? "Ingresando..." : "Ingresar"}
           </button>
         </form>
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import DINELine2 from "../../assets/DINE-LINE-2.png";
 import DINELine6 from "../../assets/DINE-LINE-6.png";
 import image26 from "../../assets/image-26.png";
@@ -7,6 +8,13 @@ import vector from "../../assets/vector.svg";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/admin/login");
+  };
+
   return (
     <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
       <div className="absolute top-0 left-0 w-full h-[61px] bg-[#004166]" />
@@ -19,7 +27,7 @@ const Header = () => {
         />
         <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
           <button
-            onClick={() => navigate("/admin/login")}
+            onClick={handleLogout}
             className="[font-family:'Inter-Bold',Helvetica] font-bold text-white text-xl text-center whitespace-nowrap hover:opacity-80 transition-opacity"
           >
             Cerrar sesión

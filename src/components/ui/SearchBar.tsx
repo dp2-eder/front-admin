@@ -1,4 +1,4 @@
-export const LoginInput = () => {
+export const SearchBar = () => {
   return (
     <div className="relative w-full">
       <input
