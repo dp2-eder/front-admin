@@ -7,7 +7,14 @@ RUN npm ci
 
 COPY . .
 
-ENV VITE_BASE_URL=/admin/
+# Build arguments for environment variables
+ARG VITE_API_BASE_URL
+ARG VITE_BASE_URL=/admin/
+
+# Convert build args to env vars for Vite
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
 RUN npm run build
 FROM nginx:alpine
 
