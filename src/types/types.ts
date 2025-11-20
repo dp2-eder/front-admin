@@ -101,3 +101,29 @@ export type AlergenoListResponse = {
   items: Alergeno[];
   total: number;
 };
+
+export interface ProductOptionCreate {
+  nombre: string;
+  precio_adicional: number;
+  activo: boolean;
+  orden: number;
+}
+
+export interface ProductSectionCreate {
+  tipo_opcion: {
+    nombre: string;
+    descripcion: string;
+    seleccion_minima: number;
+    seleccion_maxima: number;
+    orden: number;
+  };
+  opciones: ProductOptionCreate[];
+}
+
+export interface UpdateProductCompleteRequest {
+  descripcion: string;
+  disponible: boolean;
+  destacado: boolean;
+  alergenos: string[];
+  secciones: ProductSectionCreate[];
+}

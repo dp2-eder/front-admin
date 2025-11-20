@@ -3,6 +3,7 @@ import type {
   CategoryListResponse,
   MenuItem,
   AlergenoListResponse,
+  UpdateProductCompleteRequest,
 } from "../types/types";
 
 export const getMenuCards = async (): Promise<CategoryListResponse> => {
@@ -77,4 +78,17 @@ export const getProductImageUrl = (imagePath: string | null) => {
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL.replace("/api/v1", "");
   return `${baseUrl}/static/images/${imagePath}`;
+};
+
+export const updateProductComplete = async (
+  id: string,
+  data: UpdateProductCompleteRequest,
+) => {
+  try {
+    const response = await apiClient.put(`/productos/${id}/completo`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating complete product info:", error);
+    throw error;
+  }
 };

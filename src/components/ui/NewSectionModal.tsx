@@ -79,6 +79,8 @@ export const NuevaSeccionModal = ({
         precio_adicional: c.precio || "0",
         activo: true,
         orden: index + 1,
+        fecha_creacion: new Date().toISOString(),
+        fecha_modificacion: new Date().toISOString(),
       })),
     };
 

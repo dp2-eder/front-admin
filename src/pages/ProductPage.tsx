@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getProductDetails, getProductImageUrl } from "../services/menuService";
+import {
+  getProductDetails,
+  getProductImageUrl,
+  updateProductComplete,
+} from "../services/menuService";
 import type {
   MenuItem,
   ProductAlergeno,
@@ -21,10 +25,10 @@ import { ProductSectionDisplay } from "../components/ui/ProductSectionDisplay";
 export const ProductPage = () => {
   const navigate = useNavigate();
   const { productId } = useParams<{ productId: string }>();
+
   const [product, setProduct] = useState<MenuItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formData, setFormData] = useState<{
@@ -50,7 +54,6 @@ export const ProductPage = () => {
     try {
       const data = await getProductDetails(productId);
       setProduct(data);
-
       setFormData((prev) => ({
         ...prev,
         nombre: data.nombre,
@@ -80,14 +83,10 @@ export const ProductPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleToggleAvailable = () => {
+  const handleToggleAvailable = () =>
     setFormData((prev) => ({ ...prev, disponible: !prev.disponible }));
-  };
-
-  const handleToggleFeatured = () => {
+  const handleToggleFeatured = () =>
     setFormData((prev) => ({ ...prev, destacado: !prev.destacado }));
-  };
 
   const handleAllergenToggle = (allergen: Alergeno, isChecked: boolean) => {
     setFormData((prev) => {
@@ -113,16 +112,49 @@ export const ProductPage = () => {
     }));
   };
 
+  const generateCode = (name: string) => {
+    return name.toLowerCase().replace(/\s+/g, "_");
+  };
+
   const handleSaveChanges = async () => {
-    console.log("Enviando payload completo al backend:", formData);
+    if (!productId) return;
 
     try {
-      // await updateProductComplete(productId, formData);
+      setLoading(true);
+
+      const complexPayload = {
+        descripcion: formData.descripcion,
+        disponible: formData.disponible,
+        destacado: formData.destacado,
+
+        alergenos: formData.alergenos.map((a) => a.id),
+
+        secciones: formData.tipos_opciones.map((seccion) => ({
+          tipo_opcion: {
+            codigo: generateCode(seccion.nombre_tipo),
+            nombre: seccion.nombre_tipo,
+            descripcion: seccion.descripcion_tipo || "",
+            seleccion_minima: seccion.seleccion_minima,
+            seleccion_maxima: seccion.seleccion_maxima,
+            orden: seccion.orden_tipo,
+          },
+          opciones: seccion.opciones.map((opcion) => ({
+            nombre: opcion.nombre,
+            precio_adicional: Number(opcion.precio_adicional),
+            activo: opcion.activo,
+            orden: opcion.orden,
+          })),
+        })),
+      };
+
+      await updateProductComplete(productId, complexPayload);
+
       navigate("/admin/lista");
-      alert("Cambios guardados (simulado). Revisa la consola.");
     } catch (error) {
-      console.error("Error al guardar", error);
-      alert("Error al guardar cambios");
+      console.error("Error al guardar:", error);
+      alert(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -170,7 +202,7 @@ export const ProductPage = () => {
               label="Nombre"
               name="nombre"
               value={formData.nombre}
-              onChange={handleInputChange}
+              disabled={true}
             />
             <FormTextarea
               label="Descripción"
@@ -182,8 +214,8 @@ export const ProductPage = () => {
               label="Precio"
               name="precio_base"
               value={formData.precio_base}
-              onChange={handleInputChange}
               type="number"
+              disabled={true}
             />
 
             <div
@@ -265,13 +297,12 @@ export const ProductPage = () => {
                   Agregar Sección
                 </button>
               </div>
-
               <div className="p-4 flex-1 flex flex-col items-start gap-6 pr-2 max-h-[650px] overflow-y-auto scrollbar-thin">
                 {formData.tipos_opciones &&
                 formData.tipos_opciones.length > 0 ? (
                   formData.tipos_opciones.map((section, index) => (
                     <ProductSectionDisplay
-                      key={section.id_tipo_opcion || `new-section-${index}`}
+                      key={section.id_tipo_opcion || `new-${index}`}
                       section={section}
                     />
                   ))
