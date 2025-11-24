@@ -89,7 +89,7 @@ export const updateProductComplete = async (
 ) => {
   try {
     const response = await apiClient.put(
-      `/api/v1/productos/${id}/completo`,
+      `/api/v1/productos/${id}`,
       data,
     );
     return response.data;
