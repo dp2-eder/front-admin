@@ -161,13 +161,17 @@ export const ProductPage = () => {
   if (loading)
     return (
       <AdminLayout>
-        <div>Cargando...</div>
+        <div className="flex min-h-[50vh] items-center justify-center text-[#004166] text-xl font-bold">
+          Cargando productos...
+        </div>
       </AdminLayout>
     );
   if (error || !product)
     return (
       <AdminLayout>
-        <div>Error...</div>
+        <div className="flex min-h-[50vh] items-center justify-center text-red-500 text-xl font-bold">
+          Error
+        </div>
       </AdminLayout>
     );
 

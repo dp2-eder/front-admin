@@ -5,6 +5,7 @@ import { MenuCategoryHeader } from "../components/ui/MenuCategoryHeader";
 import { MenuCategorySection } from "../components/ui/MenuCategorySection";
 import { getMenuCards } from "../services/menuService";
 import type { CategoryWithProductsCard } from "../types/types";
+import { syncPlatos } from "../services/syncService";
 
 export const ListPage = () => {
   const navigate = useNavigate();
@@ -15,23 +16,25 @@ export const ListPage = () => {
 
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        setLoading(true);
-        const data = await getMenuCards();
-        setCategories(data.items);
 
-        if (data.items.length > 0) {
-          setOpenCategoryId(data.items[0].id);
-        }
-      } catch (err) {
-        setError("Error al cargar el menú. Intenta recargar la página: " + err);
-      } finally {
-        setLoading(false);
+  const fetchMenu = async () => {
+    try {
+      setLoading(true);
+      const data = await getMenuCards();
+      setCategories(data.items);
+
+      if (data.items.length > 0) {
+        setOpenCategoryId(data.items[0].id);
       }
-    };
+    } catch (err) {
+      setError("Error al cargar el menú. Intenta recargar la página: " + err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+
+  useEffect(() => {
     fetchMenu();
   }, []);
 
@@ -43,29 +46,52 @@ export const ListPage = () => {
     setOpenCategoryId((prev) => (prev === id ? null : id));
   };
 
+  const handleSyncPlatos = async () => {
+    try{
+      await syncPlatos();
+      fetchMenu();
+    } catch(error) {
+      setError("Error al sincronizar los platos: " + error);
+    } finally {
+      alert('Se sincronizaron los platos');
+    }
+  }
+
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#fafcfe]">
-        <div className="text-2xl font-bold text-[#004166]">
+      <AdminLayout>
+        <div className="flex min-h-[50vh] items-center justify-center text-[#004166] text-xl font-bold">
           Cargando menú...
         </div>
-      </div>
+      </AdminLayout>
+      
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#fafcfe]">
-        <div className="text-red-600 text-xl">{error}</div>
-      </div>
+      <AdminLayout>
+        <div className="flex min-h-screen items-center justify-center bg-[#fafcfe]">
+          <div className="text-red-600 text-xl">{error}</div>
+        </div>
+      </AdminLayout>
     );
   }
   return (
     <div className="flex flex-col min-h-screen bg-[#fafcfe]">
       <AdminLayout>
-        <h1 className="text-[45px] font-bold text-[#0E0E2C] text-center mb-8">
-          Nuestro Menú
-        </h1>
+        <div className="relative flex items-center justify-center mb-8">
+          <h1 className="text-[45px] font-bold text-[#0E0E2C] text-center">
+            Nuestro Menú
+          </h1>
+
+          <button
+            onClick={() => handleSyncPlatos()}
+            className="absolute right-0 py-3 px-6 bg-[#004166] text-white rounded-lg font-bold hover:bg-[#002f4a] transition-colors shadow-md"
+          >
+            Sincronizar platos
+          </button>
+        </div>
 
         <div className="flex flex-col gap-12 pb-10">
           {categories.map((category) =>

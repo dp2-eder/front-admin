@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { AdminLayout } from "../components/ui/AdminLayout";
 import { getActiveSessions, closeSession } from "../services/sessionService";
 import type { TableSession } from "../types/types";
-import backArrowIcon from "../assets/back.svg";
+import { syncMesas } from "../services/syncService";
 
 export const TableSessionsPage = () => {
-  const navigate = useNavigate();
   const [sessions, setSessions] = useState<TableSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +55,17 @@ export const TableSessionsPage = () => {
     });
   };
 
+  const handleSyncMesas = async () => {
+    try{
+      await syncMesas();
+      fetchSessions();
+    } catch(error) {
+      setError("Error al sincronizar las mesas: " + error);
+    } finally {
+      alert('Se sincronizaron las mesas');
+    }
+  }
+
   if (loading && sessions.length === 0) {
     return (
       <AdminLayout>
@@ -70,19 +79,18 @@ export const TableSessionsPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#fafcfe]">
       <AdminLayout>
-        <div className="mb-8 flex items-center gap-4">
+        <div className="relative flex items-center justify-center mb-8">
+          <h1 className="text-[45px] font-bold text-[#0E0E2C] text-center">
+            Mesas activas
+          </h1>
+
           <button
-            onClick={() => navigate("/admin/lista")}
-            className="flex items-center gap-2 text-lg font-semibold text-gray-700 hover:text-black transition-colors"
+            onClick={() => handleSyncMesas()}
+            className="absolute right-0 py-3 px-6 bg-[#004166] text-white rounded-lg font-bold hover:bg-[#002f4a] transition-colors shadow-md"
           >
-            <img className="w-6 h-6" alt="Volver" src={backArrowIcon} />
-            Volver al Menú
+            Sincronizar mesas
           </button>
         </div>
-
-        <h1 className="text-[40px] font-bold text-[#0E0E2C] text-center mb-10">
-          Mesas Activas
-        </h1>
 
         {error && (
           <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded text-center">
