@@ -127,3 +127,22 @@ export interface UpdateProductCompleteRequest {
   alergenos: string[];
   secciones: ProductSectionCreate[];
 }
+
+export type TableSession = {
+  id: string;
+  id_mesa: string;
+  id_usuario_creador: string;
+  token_sesion: string;
+  estado: "activa" | "cerrada";
+  fecha_inicio: string;
+  fecha_fin: string | null;
+  fecha_creacion: string;
+  fecha_modificacion: string;
+};
+
+export type TableSessionListResponse = {
+  total: number;
+  page: number;
+  limit: number;
+  sesiones: TableSession[];
+};

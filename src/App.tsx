@@ -4,6 +4,7 @@ import { ListPage } from "./pages/ListPage";
 import { ProductPage } from "./pages/ProductPage";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./components/routes/ProtectedRoute";
+import { TableSessionsPage } from "./pages/TablesPage";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/admin/lista" element={<ListPage />} />
           <Route path="/admin/producto/:productId" element={<ProductPage />} />
+          <Route path="/admin/mesas" element={<TableSessionsPage />} />
           <Route
             path="/admin/producto"
             element={<Navigate to="/admin/lista" replace />}
