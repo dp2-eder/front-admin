@@ -131,6 +131,7 @@ export interface UpdateProductCompleteRequest {
 export type TableSession = {
   id: string;
   id_mesa: string;
+  numero_mesa: string;
   id_usuario_creador: string;
   token_sesion: string;
   estado: "activa" | "cerrada";

@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import DINELine2 from "../../assets/DINE-LINE-2.png";
 import DINELine6 from "../../assets/DINE-LINE-6.png";
@@ -8,6 +8,7 @@ import vector from "../../assets/vector.svg";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useAuth();
 
   const handleLogout = () => {
@@ -15,16 +16,46 @@ const Header = () => {
     navigate("/admin/login");
   };
 
+  const isActive = (path: string) => {
+    if (path === "/admin/lista" && location.pathname.includes("/producto")) {
+      return true;
+    }
+    return location.pathname.includes(path);
+  };
+
+  const navButtonClass = (path: string) =>
+    `[font-family:'Inter-Bold',Helvetica] font-bold text-xl text-center whitespace-nowrap transition-all cursor-pointer ${
+      isActive(path)
+        ? "text-[#4cc9f0] border-b-2 border-[#4cc9f0]"
+        : "text-white hover:text-gray-300 hover:scale-105"
+    }`;
+
   return (
     <header className="sticky top-0 w-full h-[131px] shadow-lg z-50 bg-white">
       <div className="absolute top-0 left-0 w-full h-[61px] bg-[#004166]" />
       <div className="relative max-w-7xl mx-auto h-full flex items-center justify-between px-8">
-        <div className="w-48" />
+        
+        <div className="absolute top-0 left-8 h-[61px] flex items-center gap-8 z-20">
+          <button
+            onClick={() => navigate("/admin/lista")}
+            className={navButtonClass("/admin/lista")}
+          >
+            Menú
+          </button>
+          <button
+            onClick={() => navigate("/admin/mesas")}
+            className={navButtonClass("/admin/mesas")}
+          >
+            Mesas
+          </button>
+        </div>
+
         <img
           className="absolute top-[5px] left-1/2 -translate-x-1/2 w-[120px] h-[120px] object-cover z-10"
           alt="Dine LINE"
           src={DINELine2}
         />
+
         <div className="absolute top-0 right-8 h-[61px] flex items-center gap-8">
           <button
             onClick={handleLogout}

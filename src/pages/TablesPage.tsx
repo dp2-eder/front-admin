@@ -42,7 +42,6 @@ export const TableSessionsPage = () => {
     try {
       setProcessingId(sessionId);
       await closeSession(sessionId);
-      // Recargar la lista después de cerrar
       await fetchSessions();
     } catch (err) {
       alert("Error al cerrar la sesión. Inténtalo de nuevo." + err);
@@ -99,7 +98,7 @@ export const TableSessionsPage = () => {
             >
               <div className="bg-[#004166] p-4 text-center">
                 <h2 className="text-2xl font-bold text-white">
-                  Mesa {session.id_mesa}
+                  Mesa {session.numero_mesa}
                 </h2>
               </div>
 
