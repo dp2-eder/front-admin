@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const scrapperService = axios.create({
-  baseURL: import.meta.env.SCRAPPER_URL,
+  baseURL: import.meta.env.VITE_SCRAPPER_URL,
   headers: {
     "Content-Type": "application/json",
   },
