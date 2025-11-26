@@ -9,6 +9,7 @@ export const TableSessionsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const fetchSessions = async () => {
     try {
@@ -56,15 +57,17 @@ export const TableSessionsPage = () => {
   };
 
   const handleSyncMesas = async () => {
-    try{
+    try {
+      setIsSyncing(true);
       await syncMesas();
-      fetchSessions();
-    } catch(error) {
+      await fetchSessions();
+      alert('Se sincronizaron las mesas correctamente');
+    } catch (error) {
       setError("Error al sincronizar las mesas: " + error);
     } finally {
-      alert('Se sincronizaron las mesas');
+      setIsSyncing(false);
     }
-  }
+  };
 
   if (loading && sessions.length === 0) {
     return (
@@ -86,9 +89,15 @@ export const TableSessionsPage = () => {
 
           <button
             onClick={() => handleSyncMesas()}
-            className="absolute right-0 py-3 px-6 bg-[#004166] text-white rounded-lg font-bold hover:bg-[#002f4a] transition-colors shadow-md"
+            disabled={isSyncing}
+            className={`absolute right-0 py-3 px-6 bg-[#004166] text-white rounded-lg font-bold shadow-md transition-all
+              ${
+                isSyncing
+                  ? "opacity-70 cursor-not-allowed bg-[#002f4a]"
+                  : "hover:bg-[#002f4a]"
+              }`}
           >
-            Sincronizar mesas
+            {isSyncing ? "Sincronizando..." : "Sincronizar mesas"}
           </button>
         </div>
 

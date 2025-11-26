@@ -2,16 +2,26 @@ import type { MenuOptionGroup } from "../../types/types";
 
 type ProductSectionDisplayProps = {
   section: MenuOptionGroup;
+  onDelete: (id: string) => void;
 };
 
 export const ProductSectionDisplay = ({
   section,
+  onDelete,
 }: ProductSectionDisplayProps) => {
   const inputType = section.seleccion_maxima === 1 ? "radio" : "checkbox";
 
   return (
-    <div className="w-full bg-white rounded-xl border border-solid border-[#99a1ae] p-4">
-      <div className="flex justify-between items-center mb-3">
+    <div className="w-full bg-white rounded-xl border border-solid border-[#99a1ae] p-4 relative group">
+      <button
+        onClick={() => onDelete(section.id_tipo_opcion)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-1"
+        title="Eliminar sección"
+      >
+        ✕
+      </button>
+
+      <div className="flex justify-between items-center mb-3 pr-8">
         <h3 className="text-lg font-semibold text-[#0E0E2C]">
           {section.nombre_tipo}
         </h3>

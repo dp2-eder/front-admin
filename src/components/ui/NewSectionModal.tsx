@@ -13,6 +13,13 @@ type NuevaSeccionModalProps = {
   onSave: (newSection: MenuOptionGroup) => void;
 };
 
+type ValidationErrors = {
+  nombreSeccion?: string;
+  seleccionMinima?: string;
+  seleccionMaxima?: string;
+  complementos?: Record<number, { nombre?: string; precio?: string }>;
+};
+
 export const NuevaSeccionModal = ({
   isOpen,
   onClose,
@@ -23,8 +30,8 @@ export const NuevaSeccionModal = ({
   const [seleccionMinima, setSeleccionMinima] = useState(0);
   const [seleccionMaxima, setSeleccionMaxima] = useState(1);
   const [ordenTipo, setOrdenTipo] = useState(1);
-
   const [complementos, setComplementos] = useState<ComplementoForm[]>([]);
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   useEffect(() => {
     if (isOpen) {
@@ -34,6 +41,7 @@ export const NuevaSeccionModal = ({
       setSeleccionMaxima(1);
       setOrdenTipo(1);
       setComplementos([]);
+      setErrors({});
     }
   }, [isOpen]);
 
@@ -52,19 +60,88 @@ export const NuevaSeccionModal = ({
     setComplementos(
       complementos.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
     );
+
+    if (errors.complementos?.[id]?.[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        complementos: {
+          ...prev.complementos,
+          [id]: {
+            ...prev.complementos?.[id],
+            [field]: undefined,
+          },
+        },
+      }));
+    }
   };
 
   const handleDeleteComplemento = (id: number) => {
     setComplementos(complementos.filter((c) => c.id !== id));
+    if (errors.complementos?.[id]) {
+      const newCompErrors = { ...errors.complementos };
+      delete newCompErrors[id];
+      setErrors((prev) => ({ ...prev, complementos: newCompErrors }));
+    }
   };
 
   const handleSubmit = () => {
-    if (!nombreSeccion.trim())
-      return alert("El nombre de la sección es obligatorio");
-    if (seleccionMinima > seleccionMaxima)
-      return alert("La selección mínima no puede ser mayor a la máxima");
-    if (complementos.some((c) => !c.nombre.trim()))
-      return alert("Todas las opciones deben tener nombre");
+    const newErrors: ValidationErrors = {};
+    let hasError = false;
+
+    if (!nombreSeccion.trim()) {
+      newErrors.nombreSeccion = "El nombre de la sección es obligatorio";
+      hasError = true;
+    }
+
+    if (seleccionMinima < 0) {
+      newErrors.seleccionMinima = "No puede ser negativo";
+      hasError = true;
+    }
+
+    if (seleccionMaxima < 0) {
+      newErrors.seleccionMaxima = "No puede ser negativo";
+      hasError = true;
+    }
+
+    if(seleccionMaxima > complementos.length) {
+      newErrors.seleccionMaxima = "No puede ser mayor al número de complementos";
+      hasError = true;
+    }
+
+    if (!newErrors.seleccionMinima && !newErrors.seleccionMaxima) {
+      if (seleccionMinima > seleccionMaxima) {
+        newErrors.seleccionMinima = "No puede ser mayor a la máxima";
+        hasError = true;
+      }
+    }
+
+    const compErrors: Record<number, { nombre?: string; precio?: string }> = {};
+    let hasCompError = false;
+
+    complementos.forEach((c) => {
+      const errs: { nombre?: string; precio?: string } = {};
+      if (!c.nombre.trim()) {
+        errs.nombre = "Nombre requerido";
+        hasCompError = true;
+      }
+      if (Number(c.precio) < 0) {
+        errs.precio = "No negativo";
+        hasCompError = true;
+      }
+      
+      if (Object.keys(errs).length > 0) {
+        compErrors[c.id] = errs;
+      }
+    });
+
+    if (hasCompError) {
+      newErrors.complementos = compErrors;
+      hasError = true;
+    }
+
+    setErrors(newErrors);
+
+    if (hasError) return;
 
     const newSection: MenuOptionGroup = {
       id_tipo_opcion: `temp-${Date.now()}`,
@@ -108,10 +185,20 @@ export const NuevaSeccionModal = ({
               <input
                 type="text"
                 value={nombreSeccion}
-                onChange={(e) => setNombreSeccion(e.target.value)}
+                onChange={(e) => {
+                  setNombreSeccion(e.target.value);
+                  if (errors.nombreSeccion) setErrors({ ...errors, nombreSeccion: undefined });
+                }}
                 placeholder="Ej: Salsas, Bebidas, Nivel de Picante"
-                className="w-full h-12 px-4 bg-white rounded-xl border border-[#99a1ae] focus:ring-2 focus:ring-[#004166] outline-none transition-all"
+                className={`w-full h-12 px-4 bg-white rounded-xl border focus:ring-2 outline-none transition-all ${
+                  errors.nombreSeccion
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-[#99a1ae] focus:ring-[#004166]"
+                }`}
               />
+              {errors.nombreSeccion && (
+                <p className="text-xs text-red-500 mt-1">{errors.nombreSeccion}</p>
+              )}
             </div>
 
             <div className="md:col-span-2">
@@ -135,12 +222,21 @@ export const NuevaSeccionModal = ({
                 type="number"
                 min="0"
                 value={seleccionMinima}
-                onChange={(e) =>
-                  setSeleccionMinima(parseInt(e.target.value) || 0)
-                }
-                className="w-full h-12 px-4 bg-white rounded-xl border border-[#99a1ae] focus:ring-2 focus:ring-[#004166] outline-none"
+                onChange={(e) => {
+                  setSeleccionMinima(parseInt(e.target.value) || 0);
+                  if (errors.seleccionMinima) setErrors({ ...errors, seleccionMinima: undefined });
+                }}
+                className={`w-full h-12 px-4 bg-white rounded-xl border focus:ring-2 outline-none ${
+                  errors.seleccionMinima
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-[#99a1ae] focus:ring-[#004166]"
+                }`}
               />
-              <span className="text-xs text-gray-500 ml-1">0 = Opcional</span>
+              {errors.seleccionMinima ? (
+                <p className="text-xs text-red-500 mt-1">{errors.seleccionMinima}</p>
+              ) : (
+                <span className="text-xs text-gray-500 ml-1">0 = Opcional</span>
+              )}
             </div>
 
             <div>
@@ -151,11 +247,19 @@ export const NuevaSeccionModal = ({
                 type="number"
                 min="1"
                 value={seleccionMaxima}
-                onChange={(e) =>
-                  setSeleccionMaxima(parseInt(e.target.value) || 1)
-                }
-                className="w-full h-12 px-4 bg-white rounded-xl border border-[#99a1ae] focus:ring-2 focus:ring-[#004166] outline-none"
+                onChange={(e) => {
+                  setSeleccionMaxima(parseInt(e.target.value) || 1);
+                  if (errors.seleccionMaxima) setErrors({ ...errors, seleccionMaxima: undefined });
+                }}
+                className={`w-full h-12 px-4 bg-white rounded-xl border focus:ring-2 outline-none ${
+                  errors.seleccionMaxima
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-[#99a1ae] focus:ring-[#004166]"
+                }`}
               />
+              {errors.seleccionMaxima && (
+                <p className="text-xs text-red-500 mt-1">{errors.seleccionMaxima}</p>
+              )}
             </div>
 
             <div>
@@ -185,59 +289,72 @@ export const NuevaSeccionModal = ({
             </div>
 
             <div className="space-y-3 bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300">
-              {complementos.map((comp, index) => (
-                <div
-                  key={comp.id}
-                  className="flex gap-3 items-center bg-white p-3 rounded-lg shadow-sm border border-gray-100 group hover:border-gray-300 transition-all"
-                >
-                  <div className="flex items-center justify-center h-8 w-8 bg-gray-100 rounded-full text-xs font-bold text-gray-500">
-                    {index + 1}
-                  </div>
-
-                  <div className="flex-grow">
-                    <input
-                      type="text"
-                      value={comp.nombre}
-                      onChange={(e) =>
-                        handleComplementoChange(
-                          comp.id,
-                          "nombre",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="Nombre (ej: Mayonesa)"
-                      className="w-full px-2 py-1 border-b border-gray-200 focus:border-[#004166] outline-none text-sm bg-transparent"
-                    />
-                  </div>
-
-                  <div className="w-24 relative">
-                    <span className="absolute left-0 top-1 text-gray-400 text-sm">
-                      $
-                    </span>
-                    <input
-                      type="number"
-                      value={comp.precio}
-                      onChange={(e) =>
-                        handleComplementoChange(
-                          comp.id,
-                          "precio",
-                          e.target.value,
-                        )
-                      }
-                      placeholder="0.00"
-                      className="w-full pl-4 pr-2 py-1 border-b border-gray-200 focus:border-[#004166] outline-none text-sm text-right bg-transparent"
-                    />
-                  </div>
-
-                  <button
-                    onClick={() => handleDeleteComplemento(comp.id)}
-                    className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-colors"
-                    title="Eliminar opción"
+              {complementos.map((comp, index) => {
+                const compError = errors.complementos?.[comp.id];
+                return (
+                  <div
+                    key={comp.id}
+                    className="flex gap-3 items-start bg-white p-3 rounded-lg shadow-sm border border-gray-100 group hover:border-gray-300 transition-all"
                   >
-                    ✕
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center justify-center h-8 w-8 bg-gray-100 rounded-full text-xs font-bold text-gray-500 mt-1">
+                      {index + 1}
+                    </div>
+
+                    <div className="flex-grow">
+                      <input
+                        type="text"
+                        value={comp.nombre}
+                        onChange={(e) =>
+                          handleComplementoChange(
+                            comp.id,
+                            "nombre",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="Nombre (ej: Mayonesa)"
+                        className={`w-full px-2 py-1 border-b focus:border-[#004166] outline-none text-sm bg-transparent ${
+                          compError?.nombre ? "border-red-500" : "border-gray-200"
+                        }`}
+                      />
+                      {compError?.nombre && (
+                        <p className="text-[10px] text-red-500 mt-0.5">{compError.nombre}</p>
+                      )}
+                    </div>
+
+                    <div className="w-24 relative">
+                      <span className="absolute left-0 top-1 text-gray-400 text-sm">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        value={comp.precio}
+                        onChange={(e) =>
+                          handleComplementoChange(
+                            comp.id,
+                            "precio",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="0.00"
+                        className={`w-full pl-4 pr-2 py-1 border-b focus:border-[#004166] outline-none text-sm text-right bg-transparent ${
+                           compError?.precio ? "border-red-500" : "border-gray-200"
+                        }`}
+                      />
+                      {compError?.precio && (
+                         <p className="text-[10px] text-red-500 mt-0.5 text-right">{compError.precio}</p>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handleDeleteComplemento(comp.id)}
+                      className="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition-colors mt-0.5"
+                      title="Eliminar opción"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
 
               {complementos.length === 0 && (
                 <div className="text-center py-4">

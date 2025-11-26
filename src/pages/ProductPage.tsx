@@ -105,6 +105,17 @@ export const ProductPage = () => {
     });
   };
 
+  const handleDeleteSection = (sectionId: string) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar esta sección completa?")) {
+      setFormData((prev) => ({
+        ...prev,
+        tipos_opciones: prev.tipos_opciones.filter(
+          (section) => section.id_tipo_opcion !== sectionId
+        ),
+      }));
+    }
+  };
+
   const handleAddSectionLocal = (newSection: MenuOptionGroup) => {
     setFormData((prev) => ({
       ...prev,
@@ -308,6 +319,7 @@ export const ProductPage = () => {
                     <ProductSectionDisplay
                       key={section.id_tipo_opcion || `new-${index}`}
                       section={section}
+                      onDelete={handleDeleteSection}
                     />
                   ))
                 ) : (
