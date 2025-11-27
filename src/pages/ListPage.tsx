@@ -41,6 +41,10 @@ export const ListPage = () => {
     navigate(`/admin/producto/${id}`);
   };
 
+  const handleCategoryEdit = (id: string) => {
+    navigate(`/admin/categoria/${id}`);
+  };
+
   const toggleCategory = (id: string) => {
     setOpenCategoryId((prev) => (prev === id ? null : id));
   };
@@ -108,12 +112,14 @@ export const ListPage = () => {
                 category={category}
                 onClick={() => toggleCategory(category.id)}
                 onCardClick={handleProductClick}
+                onEditClick={() => handleCategoryEdit(category.id)}
               />
             ) : (
               <MenuCategoryHeader
                 key={category.id}
                 title={category.nombre}
                 onClick={() => toggleCategory(category.id)}
+                onEditClick={() => handleCategoryEdit(category.id)}
               />
             ),
           )}

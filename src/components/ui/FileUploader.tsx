@@ -1,13 +1,14 @@
 import { useState, useRef } from "react";
-import { uploadProductImage } from "../../services/menuService";
 
 type FileUploaderProps = {
-  productId?: string;
+  entityId: string;
+  uploadFunction: (id: string, file: File) => Promise<any>;
   onUploadSuccess?: () => void;
 };
 
 export const FileUploader = ({
-  productId,
+  entityId,
+  uploadFunction,
   onUploadSuccess,
 }: FileUploaderProps) => {
   const [file, setFile] = useState<File | null>(null);
@@ -21,16 +22,16 @@ export const FileUploader = ({
   };
 
   const handleUpload = async () => {
-    if (!file || !productId) return;
+    if (!file || !entityId) return;
 
     setUploading(true);
     try {
-      await uploadProductImage(productId, file);
+      await uploadFunction(entityId, file);
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
-      if (onUploadSuccess) onUploadSuccess();
+      onUploadSuccess?.();
     } catch (error) {
-      alert("Error al subir la imagen" + error);
+      alert("Error al subir la imagen: " + error);
     } finally {
       setUploading(false);
     }
@@ -60,18 +61,13 @@ export const FileUploader = ({
 
         <button
           onClick={handleUpload}
-          disabled={!file || uploading || !productId}
+          disabled={!file || uploading}
           className={`h-10 px-4 bg-[#004166] text-white rounded-2xl font-medium transition-all
             ${!file || uploading ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"}`}
         >
           {uploading ? "Subiendo..." : "Subir"}
         </button>
       </div>
-      {file && !productId && (
-        <span className="text-xs text-red-500">
-          Guarda el producto antes de subir imagen.
-        </span>
-      )}
     </div>
   );
 };

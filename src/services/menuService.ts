@@ -98,3 +98,45 @@ export const updateProductComplete = async (
     throw error;
   }
 };
+
+// Category-related service functions
+export const getCategoryDetails = async (id: string): Promise<any> => {
+  try {
+    const response = await apiClient.get(`/api/v1/categorias/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching category details:", error);
+    throw error;
+  }
+};
+
+export const uploadCategoryImage = async (categoryId: string, file: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await apiClient.post(
+      `/api/v1/categorias/${categoryId}/imagen`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading category image:", error);
+    throw error;
+  }
+};
+
+export const updateCategory = async (id: string, data: { descripcion?: string }) => {
+  try {
+    const response = await apiClient.put(`/api/v1/categorias/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating category:", error);
+    throw error;
+  }
+};

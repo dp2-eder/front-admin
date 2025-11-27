@@ -4,6 +4,7 @@ import {
   getProductDetails,
   getProductImageUrl,
   updateProductComplete,
+  uploadProductImage,
 } from "../services/menuService";
 import type {
   MenuItem,
@@ -203,7 +204,8 @@ export const ProductPage = () => {
           <div className="lg:col-span-1 flex flex-col gap-8">
             <ImagePreview src={displayImageUrl} alt={product.nombre} />
             <FileUploader
-              productId={product.id}
+              entityId={product.id}
+              uploadFunction={uploadProductImage}
               onUploadSuccess={fetchProduct}
             />
             <AllergenList

@@ -6,23 +6,37 @@ type MenuCategorySectionProps = {
   category: CategoryWithProductsCard;
   onClick: () => void;
   onCardClick: (id: string) => void;
+  onEditClick?: () => void;
 };
 
 export const MenuCategorySection = ({
   category,
   onClick,
   onCardClick,
+  onEditClick,
 }: MenuCategorySectionProps) => {
   return (
     <section className="w-full bg-[#ECF1F4] rounded-[30px] shadow-lg p-8">
-      <div
-        onClick={onClick}
-        className="flex justify-between items-center border-b border-gray-300 pb-4 mb-8 cursor-pointer"
-      >
-        <h2 className="[font-family:'Inter-ExtraBold',Helvetica] font-extrabold text-[#0E0E2C] text-[40px] text-center">
-          {category.nombre}
-        </h2>
-        <img src={image1} alt="Colapsar" className="w-10 h-10" />
+      <div className="flex justify-between items-center border-b border-gray-300 pb-4 mb-8">
+        <div onClick={onClick} className="flex-1 cursor-pointer">
+          <h2 className="[font-family:'Inter-ExtraBold',Helvetica] font-extrabold text-[#0E0E2C] text-[40px]">
+            {category.nombre}
+          </h2>
+        </div>
+        <div className="flex items-center gap-4">
+          {onEditClick && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditClick();
+              }}
+              className="px-4 py-2 bg-[#004166] text-white rounded-lg text-sm font-semibold hover:bg-[#002f4a] transition-colors"
+            >
+              Editar Categoría
+            </button>
+          )}
+          <img onClick={onClick} src={image1} alt="Colapsar" className="w-10 h-10 cursor-pointer" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

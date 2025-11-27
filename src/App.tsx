@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "./pages/LoginPage";
 import { ListPage } from "./pages/ListPage";
 import { ProductPage } from "./pages/ProductPage";
+import CategoryPage from "./pages/CategoryPage";
 import { AuthProvider } from "./context/AuthProvider";
 import { ProtectedRoute } from "./components/routes/ProtectedRoute";
 import { TableSessionsPage } from "./pages/TablesPage";
@@ -14,6 +15,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/admin/lista" element={<ListPage />} />
           <Route path="/admin/producto/:productId" element={<ProductPage />} />
+          <Route path="/admin/categoria/:categoryId" element={<CategoryPage />} />
           <Route path="/admin/mesas" element={<TableSessionsPage />} />
           <Route
             path="/admin/producto"
