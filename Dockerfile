@@ -10,10 +10,12 @@ COPY . .
 # Build arguments for environment variables
 ARG VITE_API_BASE_URL
 ARG VITE_BASE_URL=/admin/
+ARG VITE_SCRAPPER_URL
 
 # Convert build args to env vars for Vite
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV VITE_BASE_URL=$VITE_BASE_URL
+ENV VITE_SCRAPPER_URL=$VITE_SCRAPPER_URL
 
 RUN npm run build
 FROM nginx:alpine
